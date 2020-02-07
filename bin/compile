@@ -30,7 +30,8 @@ fi
 echo "-----> Processing the API docs"
 mkdir -p "$1/doc"
 for FILE in `ls doc/*.erb`; do
-  echo "$FILE > $1/${FILE%.erb}"
+  echo server proxy: $SERVER_PROXY_URI
+  echo "       $FILE > $1/${FILE%.erb}"
   erb $FILE > $1/${FILE%.erb}
 done
 
