@@ -2,6 +2,24 @@
 
 set -e
 
+export_env_dir() {
+  local env_dir=${1:-$ENV_DIR}
+  local whitelist_regex=${2:-''}
+  local blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH|BUILDPACK_URL)$'}
+
+  if [ -d "$env_dir" ]; then
+    echo "-----> Exporting config vars"
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
+        echo "       $e" &&
+        export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+
+export_env_dir
+
 mkdir -p "$1/bin/"
 cp "bin/nginx-$STACK" "$1/bin/nginx"
 nginx_version=$(./bin/nginx-$STACK -V 2>&1 | head -1 | awk '{ print $NF }')
@@ -30,7 +48,6 @@ fi
 echo "-----> Processing the API docs"
 mkdir -p "$1/doc"
 for FILE in `ls doc/*.erb`; do
-  echo server proxy: $SERVER_PROXY_URI
   echo "       $FILE > $1/${FILE%.erb}"
   erb $FILE > $1/${FILE%.erb}
 done
