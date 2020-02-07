@@ -2,6 +2,8 @@
 
 set -e
 
+ENV_DIR="$3"
+
 export_env_dir() {
   local env_dir=${1:-$ENV_DIR}
   local whitelist_regex=${2:-''}
