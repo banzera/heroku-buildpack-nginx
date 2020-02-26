@@ -54,4 +54,8 @@ for FILE in `ls doc/*.erb`; do
   erb $FILE > $1/${FILE%.erb}
 done
 
+echo "-----> Copying the config file builder"
+cp scripts/env-to-config $1
+chmod +x $1/env-to-config
+
 exit 0
